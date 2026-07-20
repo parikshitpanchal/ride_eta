@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+saved_models/
+
+generate_summary.md
+ride_eta_audit_report.md
