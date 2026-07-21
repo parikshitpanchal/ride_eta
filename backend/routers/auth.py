@@ -34,7 +34,7 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
         username=user_in.username,
         email=user_in.email,
         hashed_password=get_password_hash(user_in.password),
-        role=user_in.role if user_in.role in ("admin", "data_scientist", "viewer") else "viewer",
+        role=user_in.role if user_in.role in ("admin", "data_scientist") else "data_scientist",
     )
     db.add(user)
     db.commit()

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import {
   Table,
   BarChart3,
@@ -13,13 +14,15 @@ import {
   LogOut,
   LogIn,
   Shield,
-  User,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, role, logout, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { label: "Predictions", href: "/predictions", icon: Table, roles: ["admin", "data_scientist", "guest"] },
@@ -30,42 +33,83 @@ export default function Sidebar() {
   ];
 
   const filteredNavItems = navItems.filter((item) => {
-    if (!isAuthenticated) return true; // Show all to guest/unauthenticated for preview
+    if (!isAuthenticated) return true;
     if (item.roles.includes("admin") && role === "admin") return true;
-    return item.roles.includes(role) ;
+    return item.roles.includes(role);
   });
 
+  const isDark = theme === "dark";
+
   return (
-    <aside className="w-64 bg-[#0d1322] border-r border-slate-800/80 flex flex-col justify-between h-screen sticky top-0 z-30">
+    <aside
+      style={{
+        background: "var(--bg-sidebar)",
+        borderRight: "1px solid var(--border-main)",
+        color: "var(--text-primary)",
+        transition: "background 0.25s ease, border-color 0.25s ease",
+      }}
+      className="w-64 flex flex-col justify-between h-screen sticky top-0 z-30"
+    >
       <div>
         {/* Logo Header */}
-        <div className="p-6 border-b border-slate-800/80 flex items-center space-x-3">
-          <div className="p-2.5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400">
+        <div
+          style={{ borderBottom: "1px solid var(--border-main)" }}
+          className="p-6 flex items-center space-x-3"
+        >
+          <div
+            style={{
+              background: "rgba(6,182,212,0.10)",
+              border: "1px solid rgba(6,182,212,0.30)",
+              color: "var(--accent-cyan)",
+            }}
+            className="p-2.5 rounded-xl"
+          >
             <Car className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-bold text-lg text-white tracking-wide">Ride ETA</h1>
-            <p className="text-xs text-cyan-400 font-medium">ML Intelligence Engine</p>
+            <h1 style={{ color: "var(--text-primary)" }} className="font-bold text-lg tracking-wide">
+              Ride ETA
+            </h1>
+            <p style={{ color: "var(--accent-cyan)" }} className="text-xs font-medium">
+              ML Intelligence Engine
+            </p>
           </div>
         </div>
 
         {/* User Profile Card */}
-        <div className="p-4 m-3 bg-slate-900/80 border border-slate-800 rounded-xl">
+        <div
+          style={{
+            background: "var(--bg-hover)",
+            border: "1px solid var(--border-main)",
+          }}
+          className="p-4 m-3 rounded-xl"
+        >
           {isAuthenticated ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-xs">
+                <div
+                  style={{
+                    background: "rgba(6,182,212,0.15)",
+                    border: "1px solid rgba(6,182,212,0.30)",
+                    color: "var(--accent-cyan)",
+                  }}
+                  className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+                >
                   {user?.username?.[0]?.toUpperCase() || "U"}
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-100">{user?.username}</p>
-                  <span className={`inline-block px-1.5 py-0.2 rounded text-[10px] font-semibold uppercase ${
-                    role === "admin"
-                      ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                      : role === "data_scientist"
-                      ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
-                      : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                  }`}>
+                  <p style={{ color: "var(--text-primary)" }} className="text-xs font-bold">
+                    {user?.username}
+                  </p>
+                  <span
+                    className={`inline-block px-1.5 rounded text-[10px] font-semibold uppercase ${
+                      role === "admin"
+                        ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                        : role === "data_scientist"
+                        ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                        : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    }`}
+                  >
                     {role === "data_scientist" ? "Data Sci" : role}
                   </span>
                 </div>
@@ -73,7 +117,8 @@ export default function Sidebar() {
               <button
                 onClick={logout}
                 title="Sign Out"
-                className="p-1.5 text-slate-400 hover:text-rose-400 transition-colors"
+                style={{ color: "var(--text-muted)" }}
+                className="p-1.5 hover:text-rose-400 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -81,7 +126,8 @@ export default function Sidebar() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center justify-between w-full py-1 text-xs font-semibold text-cyan-400 hover:text-cyan-300"
+              style={{ color: "var(--accent-cyan)" }}
+              className="flex items-center justify-between w-full py-1 text-xs font-semibold hover:opacity-80"
             >
               <div className="flex items-center space-x-2">
                 <LogIn className="w-4 h-4" />
@@ -95,19 +141,34 @@ export default function Sidebar() {
         <nav className="px-3 py-2 space-y-1.5">
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== "/predictions" && pathname.startsWith(item.href));
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/predictions" && pathname.startsWith(item.href));
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
+                style={
                   isActive
-                    ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-lg shadow-cyan-500/5"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                    ? {
+                        background: "var(--bg-active)",
+                        color: "var(--text-active)",
+                        border: "1px solid var(--border-active)",
+                      }
+                    : {
+                        color: "var(--text-secondary)",
+                        border: "1px solid transparent",
+                      }
+                }
+                className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
+                  !isActive ? "hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]" : ""
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? "text-cyan-400" : "text-slate-400"}`} />
+                <Icon
+                  className="w-5 h-5"
+                  style={{ color: isActive ? "var(--accent-cyan)" : "var(--text-muted)" }}
+                />
                 <span>{item.label}</span>
               </Link>
             );
@@ -115,14 +176,52 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Footer System Status */}
-      <div className="p-4 m-3 bg-slate-900/60 border border-slate-800 rounded-xl text-[11px] text-slate-500">
-        <div className="flex items-center space-x-2 font-semibold text-emerald-400">
-          <Shield className="w-3.5 h-3.5 text-emerald-400" />
-          <span>RBAC Security Active</span>
+      {/* Footer: Status + Theme Toggle */}
+      <div className="p-3 space-y-2">
+        {/* Theme Toggle Row */}
+        <div
+          style={{
+            background: "var(--bg-hover)",
+            border: "1px solid var(--border-main)",
+          }}
+          className="flex items-center justify-between px-4 py-3 rounded-xl"
+        >
+          <div className="flex items-center space-x-2">
+            {isDark ? (
+              <Moon className="w-4 h-4" style={{ color: "var(--accent-cyan)" }} />
+            ) : (
+              <Sun className="w-4 h-4" style={{ color: "var(--accent-cyan)" }} />
+            )}
+            <span style={{ color: "var(--text-secondary)" }} className="text-xs font-medium">
+              {isDark ? "Dark Mode" : "Light Mode"}
+            </span>
+          </div>
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          />
         </div>
-        <p className="mt-1 text-[10px]">PyTorch & PostgreSQL Integrated</p>
+
+        {/* System Status */}
+        <div
+          style={{
+            background: "var(--bg-hover)",
+            border: "1px solid var(--border-main)",
+          }}
+          className="p-4 rounded-xl text-[11px]"
+        >
+          <div className="flex items-center space-x-2 font-semibold" style={{ color: "var(--accent-emerald)" }}>
+            <Shield className="w-3.5 h-3.5" />
+            <span>RBAC Security Active</span>
+          </div>
+          <p className="mt-1 text-[10px]" style={{ color: "var(--text-muted)" }}>
+            PyTorch &amp; SQLite Integrated
+          </p>
+        </div>
       </div>
     </aside>
   );
 }
+

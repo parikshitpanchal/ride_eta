@@ -170,7 +170,6 @@ def seed_database():
         default_users = [
             ("admin", "admin@rideeta.com", "admin123", "admin"),
             ("ds", "ds@rideeta.com", "ds123", "data_scientist"),
-            ("viewer", "viewer@rideeta.com", "viewer123", "viewer"),
         ]
         for uname, email, pword, role in default_users:
             if not db.query(User).filter(User.username == uname).first():
@@ -182,7 +181,7 @@ def seed_database():
                 )
                 db.add(user)
         db.commit()
-        logger.info("Default users seeded (admin, ds, viewer).")
+        logger.info("Default users seeded (admin, ds).")
 
         logger.info("Database seeding completed successfully!")
 

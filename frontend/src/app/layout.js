@@ -1,17 +1,20 @@
 "use client";
 
 import "./globals.css";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import Sidebar from "@/components/Sidebar";
 import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#0B0F19] text-slate-100 min-h-screen">
-        <AuthProvider>
-          <LayoutContent>{children}</LayoutContent>
-        </AuthProvider>
+    <html lang="en">
+      <body className="min-h-screen">
+        <ThemeProvider>
+          <AuthProvider>
+            <LayoutContent>{children}</LayoutContent>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
@@ -34,3 +37,4 @@ function LayoutContent({ children }) {
     </div>
   );
 }
+

@@ -1,44 +1,102 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
+
+  /* ======== DARK MODE (default) ======== */
+  :root,
+  [data-theme="dark"] {
     --bg-main: #0B0F19;
+    --bg-sidebar: #0d1322;
     --bg-card: #111827;
     --bg-glass: rgba(17, 24, 39, 0.75);
+    --bg-input: #1f2937;
+    --bg-hover: rgba(51, 65, 85, 0.40);
+    --bg-active: rgba(6, 182, 212, 0.15);
     --border-glass: rgba(255, 255, 255, 0.08);
+    --border-main: rgba(51, 65, 85, 0.80);
+    --border-active: rgba(6, 182, 212, 0.30);
+    --text-primary: #f3f4f6;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-active: #67e8f9;
     --accent-cyan: #06b6d4;
     --accent-purple: #8b5cf6;
     --accent-emerald: #10b981;
     --accent-rose: #f43f5e;
+    --scrollbar-track: #0b0f19;
+    --scrollbar-thumb: #1f2937;
+    --scrollbar-thumb-hover: #374151;
+    --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --shadow-hover: 0 12px 40px 0 rgba(6, 182, 212, 0.10);
+    --toggle-track: #1e293b;
+    --toggle-thumb: #06b6d4;
+    --toggle-border: rgba(51, 65, 85, 0.8);
+  }
+
+  /* ======== LIGHT MODE ======== */
+  [data-theme="light"] {
+    --bg-main: #f0f2f5;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.88);
+    --bg-input: #f8fafc;
+    --bg-hover: rgba(226, 232, 240, 0.40);
+    --bg-active: rgba(14, 116, 144, 0.04);
+    --border-glass: rgba(203, 213, 225, 0.35);
+    --border-main: rgba(203, 213, 225, 0.70);
+    --border-active: rgba(14, 116, 144, 0.30);
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #10141a;
+    --text-active: #0e7490;
+    --accent-cyan: #0e749083;
+    --accent-purple: #7c3aed;
+    --accent-emerald: #059669;
+    --accent-rose: #e11d48;
+    --scrollbar-track: #f0f2f5;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+    --shadow-card: 0 2px 16px 0 rgba(15, 23, 42, 0.06);
+    --shadow-hover: 0 6px 24px 0 rgba(14, 116, 144, 0.10);
+    --toggle-track: #e2e8f0;
+    --toggle-thumb: #0e7490;
+    --toggle-border: rgba(203, 213, 225, 0.9);
   }
 
   body {
     background-color: var(--bg-main);
-    color: #f3f4f6;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100vh;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
 
-/* Custom Glassmorphism Card Utility */
+/* Glassmorphism Card */
 .glass-card {
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-glass);
   border-radius: 1rem;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: var(--shadow-card);
   transition: all 0.2s ease-in-out;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 40px 0 rgba(6, 182, 212, 0.1);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-hover);
 }
 
 /* Gradient Text */
 .gradient-text-cyan {
   background: linear-gradient(135deg, #38bdf8, #06b6d4, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .gradient-text-cyan {
+  background: linear-gradient(135deg, #0284c7, #0e7490, #0369a1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -49,21 +107,145 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Custom Scrollbar */
+/* Theme Toggle */
+.theme-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--toggle-track);
+  border: 1px solid var(--toggle-border);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.25s ease, border-color 0.25s ease;
+  outline: none;
+}
+
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--toggle-thumb);
+  transition: transform 0.25s ease;
+}
+
+[data-theme="light"] .theme-toggle::after {
+  transform: translateX(20px);
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ============================================================
+   THEME-AWARE OVERRIDES
+   These override hardcoded Tailwind dark classes in page files
+   so search bars, tables, and text all adapt to light mode.
+   ============================================================ */
+
+/* Page headings (text-white) */
+[data-theme="light"] .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Secondary text (text-slate-400, text-slate-500) */
+[data-theme="light"] .text-slate-400,
+[data-theme="light"] .text-slate-500 {
+  color: var(--text-muted) !important;
+}
+
+/* Primary text in cells (text-slate-200, text-slate-300) */
+[data-theme="light"] .text-slate-200,
+[data-theme="light"] .text-slate-300 {
+  color: var(--text-secondary) !important;
+}
+
+/* Search input & select — dark versions */
+[data-theme="light"] .bg-slate-900\/80,
+[data-theme="light"] .bg-slate-900\/90,
+[data-theme="light"] .bg-slate-900\/60,
+[data-theme="light"] [class*="bg-slate-900"] {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Input & select borders */
+[data-theme="light"] .border-slate-700\/60,
+[data-theme="light"] [class*="border-slate-700"],
+[data-theme="light"] .border-slate-800,
+[data-theme="light"] [class*="border-slate-800"] {
+  border-color: var(--border-main) !important;
+}
+
+/* Table head background */
+[data-theme="light"] thead,
+[data-theme="light"] thead th {
+  background-color: #f1f5f9 !important;
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-main) !important;
+}
+
+/* Table row dividers */
+[data-theme="light"] .divide-slate-800\/60>*+*,
+[data-theme="light"] [class*="divide-slate-800"]>*+* {
+  border-top-color: var(--border-main) !important;
+}
+
+/* Table row hover */
+[data-theme="light"] .hover\:bg-slate-800\/40:hover {
+  background-color: rgba(226, 232, 240, 0.60) !important;
+}
+
+/* Loading skeleton blocks */
+[data-theme="light"] .bg-slate-800 {
+  background-color: #e2e8f0 !important;
+}
+
+/* Driver/prediction highlight rows inside glass-card */
+[data-theme="light"] .bg-slate-900\/60 {
+  background-color: rgba(241, 245, 249, 0.90) !important;
+}
+
+/* Status filter button strip */
+[data-theme="light"] .bg-slate-900\/80 {
+  background-color: var(--bg-input) !important;
+}
+
+/* Placeholder text */
+[data-theme="light"] ::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
+/* input / select text color in light mode */
+[data-theme="light"] input,
+[data-theme="light"] select {
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border-color: var(--border-main);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus {
+  border-color: var(--accent-cyan);
+  outline: none;
 }

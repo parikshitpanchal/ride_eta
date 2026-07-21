@@ -9,7 +9,7 @@ class UserCreate(BaseModel):
     username: str
     email: str
     password: str
-    role: str = "viewer"  # admin / data_scientist / viewer
+    role: str = "data_scientist"  # admin / data_scientist 
 
 
 class UserLogin(BaseModel):
