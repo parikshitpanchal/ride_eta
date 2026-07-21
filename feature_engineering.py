@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import logging
 from tqdm import tqdm
-import config
+from configs import config
 
 logging.basicConfig(level=config.LOG_LEVEL, format=config.LOG_FORMAT)
 logger = logging.getLogger(__name__)
@@ -29,7 +29,19 @@ class FeatureEngineer:
         """Main feature engineering pipeline"""
         logger.info("Starting feature engineering...")
         
-        # Ensure data is sorted by timestamp
+        # Ensure timestamp is datetime (handles ISO strings and Excel serial floats)
+        def _parse_timestamp(val):
+            if pd.isna(val):
+                return pd.NaT
+            try:
+                num_val = float(val)
+                if 10000 < num_val < 60000:
+                    return pd.to_datetime(num_val, unit='D', origin='1899-12-30')
+            except (ValueError, TypeError):
+                pass
+            return pd.to_datetime(val, errors='coerce')
+
+        df['booking_timestamp'] = df['booking_timestamp'].apply(_parse_timestamp)
         df = df.sort_values('booking_timestamp').reset_index(drop=True)
         
         # 1. Precompute features for the current order (which may be leakage but needed as raw/calculation helper)

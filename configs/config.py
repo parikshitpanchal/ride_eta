@@ -25,7 +25,7 @@ TRAIN_DATA_FILE = DATA_DIR / "ride_orders_engineered_D30K.csv"
 TEST_DATA_FILE = DATA_DIR / "ride_orders_test_v24.csv"
 
 # Create directories if they don't exist
-for directory in [DATA_DIR, MODELS_DIR, REPORTS_DIR, LOGS_DIR]:
+for directory in [DATA_DIR]:
     directory.mkdir(parents=True, exist_ok=True)
 
 # Quick Demo Mode (set to True for faster execution with sampling)

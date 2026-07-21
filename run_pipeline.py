@@ -147,7 +147,7 @@ def main() -> None:
     predictor = Predictor(model=model, device=config.DEVICE)
     predictions = predictor.predict(test_loader)
     
-    predictions["delay"] = (predictions["delay_probability"] >= 0.5).int()
+    predictions["delay"] = (predictions["delay_probability"] >= config.DELAY_THRESHOLD).int()
 
     logger.info("Generated %d predictions.", len(predictions["eta"]))
 
