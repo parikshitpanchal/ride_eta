@@ -4,7 +4,7 @@ import pandas as pd
 
 from sklearn.preprocessing import OrdinalEncoder
 
-from configs import config
+from ml.configs import config
 
 logger = logging.getLogger(__name__)
 

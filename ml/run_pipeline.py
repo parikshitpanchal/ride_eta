@@ -5,18 +5,18 @@ import torch
 # pyrefly: ignore [missing-import]
 from torch.optim import Adam
 
-from configs import config
-from datasets.dataloader import create_dataloader
-from datasets.ride_dataset import RideDataset
-from losses.losses import MultiTaskLoss
-from models.ride_eta_network import RideETANetwork
-from preprocessing.encoder import CategoricalEncoder
-from preprocessing.scaler import NumericalScaler
-from preprocessing.validator import DataValidator
-from preprocessing.pipeline import DataPipeline
-from trainer.trainer import Trainer
-from predictor.predictor import Predictor
-from utils.model_metadata import save_model_metadata
+from ml.configs import config
+from ml.datasets.dataloader import create_dataloader
+from ml.datasets.ride_dataset import RideDataset
+from ml.losses.losses import MultiTaskLoss
+from ml.models.ride_eta_network import RideETANetwork
+from ml.preprocessing.encoder import CategoricalEncoder
+from ml.preprocessing.scaler import NumericalScaler
+from ml.preprocessing.validator import DataValidator
+from ml.preprocessing.pipeline import DataPipeline
+from ml.trainer.trainer import Trainer
+from ml.predictor.predictor import Predictor
+from ml.utils.model_metadata import save_model_metadata
 
 logger = logging.getLogger("run_pipeline")
 

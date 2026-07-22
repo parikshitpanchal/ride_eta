@@ -8,7 +8,7 @@ import torch
 # pyrefly: ignore [missing-import]
 from torch.utils.data import Dataset
 
-from configs import config
+from ml.configs import config
 
 logger = logging.getLogger(__name__)
 

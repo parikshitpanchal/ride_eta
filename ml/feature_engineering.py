@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import logging
 from tqdm import tqdm
-from configs import config
+from ml.configs import config
 
 logging.basicConfig(level=config.LOG_LEVEL, format=config.LOG_FORMAT)
 logger = logging.getLogger(__name__)

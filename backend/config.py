@@ -8,9 +8,9 @@ from pathlib import Path
 # =====================================================
 PROJECT_ROOT = Path(__file__).resolve().parent.parent  # Ride_ETA/
 BACKEND_DIR = Path(__file__).resolve().parent  # Ride_ETA/backend/
-ML_DIR = PROJECT_ROOT  # ML code is at the project root
-DATA_DIR = PROJECT_ROOT / "data"
-SAVED_MODEL_DIR = PROJECT_ROOT / "saved_models"
+ML_DIR = PROJECT_ROOT / "ml"
+DATA_DIR = ML_DIR / "data"
+SAVED_MODEL_DIR = ML_DIR / "saved_models"
 UPLOAD_DIR = DATA_DIR / "uploads"
 
 # Create upload directory if it doesn't exist

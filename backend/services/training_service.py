@@ -16,6 +16,7 @@ from backend.config import ML_DIR
 from backend.database import SessionLocal
 from backend.models.training_run import TrainingRun
 from backend.models.training_epoch import TrainingEpoch
+from ml.evaluate import evaluate_model
 
 # Add ML code to path
 if str(ML_DIR) not in sys.path:
@@ -29,7 +30,7 @@ stop_training_flag = threading.Event()
 
 def start_training_background(db: Session) -> TrainingRun:
     """Create a training run record and start training in a background thread."""
-    from configs import config as ml_config
+    from ml.configs import config as ml_config
 
     run = TrainingRun(
         status="running",
@@ -57,20 +58,20 @@ def _run_training(run_id: int):
     """The actual training loop, runs in a background thread."""
     db = SessionLocal()
     try:
-        from configs import config as ml_config
-        from preprocessing.encoder import CategoricalEncoder
-        from preprocessing.scaler import NumericalScaler
-        from preprocessing.validator import DataValidator
-        from preprocessing.pipeline import DataPipeline
-        from datasets.ride_dataset import RideDataset
-        from datasets.dataloader import create_dataloader
-        from models.ride_eta_network import RideETANetwork
-        from losses.losses import MultiTaskLoss
-        from utils.model_metadata import save_model_metadata
-        from metrics.classification_metrics import calculate_classification_metrics
-        from metrics.regression_metrics import calculate_regression_metrics
-        from callbacks.checkpoint import ModelCheckpoint
-        from callbacks.early_stopping import EarlyStopping
+        from ml.configs import config as ml_config
+        from ml.preprocessing.encoder import CategoricalEncoder
+        from ml.preprocessing.scaler import NumericalScaler
+        from ml.preprocessing.validator import DataValidator
+        from ml.preprocessing.pipeline import DataPipeline
+        from ml.datasets.ride_dataset import RideDataset
+        from ml.datasets.dataloader import create_dataloader
+        from ml.models.ride_eta_network import RideETANetwork
+        from ml.losses.losses import MultiTaskLoss
+        from ml.utils.model_metadata import save_model_metadata
+        from ml.metrics.classification_metrics import calculate_classification_metrics
+        from ml.metrics.regression_metrics import calculate_regression_metrics
+        from ml.callbacks.checkpoint import ModelCheckpoint
+        from ml.callbacks.early_stopping import EarlyStopping
         import pandas as pd
 
         # Set seeds
@@ -86,9 +87,16 @@ def _run_training(run_id: int):
         train_df = load_training_data_from_db(db)
 
         if train_df is None or len(train_df) == 0:
-            logger.warning("No training data found in DB, falling back to CSV")
-            train_df = pd.read_csv(ml_config.TRAIN_DATA_FILE)
+            logger.error("Training aborted. No training data found in database.")
+            run = db.query(TrainingRun).filter(TrainingRun.id == run_id).first()
 
+            run.status = "failed"
+            run.completed_at = datetime.now(timezone.utc)
+
+            db.commit()
+            # logger.warning("No training data found in DB, falling back to CSV")
+            # train_df = pd.read_csv(ml_config.TRAIN_DATA_FILE)
+            return
         validator = DataValidator()
         encoder = CategoricalEncoder()
         scaler = NumericalScaler()
@@ -197,6 +205,31 @@ def _run_training(run_id: int):
         )
         encoder.save()
         scaler.save()
+# --------------------------------------------------------------------------------
+        # test_loss, eta_metrics, delay_metrics = evaluate(...)
+        validation_loss, eta_metrics, delay_metrics = evaluate_model(
+            model=model,
+            dataframe=validation_dataframe,
+            validator=validator,
+            encoder=encoder,
+            scaler=scaler,
+                )
+
+
+        run = db.query(TrainingRun).filter(TrainingRun.id == run_id).first()
+
+        run.test_mae = eta_metrics["mae"]
+        run.test_rmse = eta_metrics["rmse"]
+        run.test_r2 = eta_metrics["r2"]
+
+        run.test_accuracy = delay_metrics["accuracy"]
+        run.test_precision = delay_metrics["precision"]
+        run.test_recall = delay_metrics["recall"]
+        run.test_f1 = delay_metrics["f1"]
+        run.test_roc_auc = delay_metrics["roc_auc"]
+        run.confusion_matrix = delay_metrics["confusion_matrix"]
+
+        db.commit()
 
         # Mark completed
         run = db.query(TrainingRun).filter(TrainingRun.id == run_id).first()
@@ -220,8 +253,8 @@ def _run_training(run_id: int):
 
 def _run_epoch(model, dataloader, criterion, device, optimizer=None, training=True):
     """Run a single training or validation epoch. Returns (loss, eta_metrics, delay_metrics)."""
-    from metrics.classification_metrics import calculate_classification_metrics
-    from metrics.regression_metrics import calculate_regression_metrics
+    from ml.metrics.classification_metrics import calculate_classification_metrics
+    from ml.metrics.regression_metrics import calculate_regression_metrics
 
     if training:
         model.train()

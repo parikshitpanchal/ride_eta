@@ -1,6 +1,6 @@
 import numpy as np
 # pyrefly: ignore [missing-import]
-from configs import config
+from ml.configs import config
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
@@ -27,5 +27,5 @@ def calculate_classification_metrics(probabilities: np.ndarray,targets: np.ndarr
         "recall": float(recall),
         "f1": float(f1),
         "roc_auc": float(roc_auc),
-        "confusion_matrix": confusion,
+        "confusion_matrix": confusion.tolist(),
     }

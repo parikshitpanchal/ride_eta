@@ -3,7 +3,7 @@ import torch
 # pyrefly: ignore [missing-import]
 import torch.nn as nn
 
-from configs import config
+from ml.configs import config
 
 class MultiTaskLoss(nn.Module):
     def __init__(self) -> None:

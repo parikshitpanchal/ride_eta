@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from configs import config
+from ml.configs import config
 
 logger = logging.getLogger(__name__)
 

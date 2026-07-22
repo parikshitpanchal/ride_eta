@@ -67,7 +67,7 @@ def run_feature_engineering_on_db(db: Session) -> dict:
     df = pd.DataFrame(rows)
 
     # Run feature engineering
-    from feature_engineering import FeatureEngineer
+    from ml.feature_engineering import FeatureEngineer
     engineer = FeatureEngineer()
     df = engineer.engineer_features(df)
 

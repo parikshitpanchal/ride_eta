@@ -3,7 +3,7 @@ from pathlib import Path
 # pyrefly: ignore [missing-import]
 import torch
 
-from configs import config
+from ml.configs import config
 
 class ModelCheckpoint:
     def __init__(self,save_directory: Path,checkpoint_name: str,) -> None:

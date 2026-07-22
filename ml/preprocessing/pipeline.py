@@ -1,9 +1,9 @@
 import pandas as pd
 
-from configs import config
-from preprocessing.encoder import CategoricalEncoder
-from preprocessing.scaler import NumericalScaler
-from preprocessing.validator import DataValidator
+from ml.configs import config
+from ml.preprocessing.encoder import CategoricalEncoder
+from ml.preprocessing.scaler import NumericalScaler
+from ml.preprocessing.validator import DataValidator
 
 
 class DataPipeline:

@@ -52,7 +52,7 @@ export default function DashboardPage() {
   }
 
   // Fallback default metrics if no run completed yet
-  const cm = latestRun?.confusion_matrix || [[19359, 3246], [4006, 3389]];
+  const cm = latestRun?.confusion_matrix || [[0, 0], [0, 0]];
   const tn = cm[0]?.[0] || 0;
   const fp = cm[0]?.[1] || 0;
   const fn = cm[1]?.[0] || 0;
@@ -94,7 +94,7 @@ export default function DashboardPage() {
               <Target className="w-4 h-4 text-cyan-400" />
             </div>
             <p className="text-3xl font-extrabold text-white mt-2">
-              {latestRun?.test_mae ? `${latestRun.test_mae.toFixed(2)} min` : "4.39 min"}
+              {latestRun?.test_mae != null ? `${latestRun.test_mae.toFixed(2)} min` : "—"}
             </p>
             <p className="text-xs text-slate-400 mt-1">Average ETA difference per ride</p>
           </div>
@@ -105,7 +105,7 @@ export default function DashboardPage() {
               <BarChart3 className="w-4 h-4 text-purple-400" />
             </div>
             <p className="text-3xl font-extrabold text-white mt-2">
-              {latestRun?.test_rmse ? `${latestRun.test_rmse.toFixed(2)} min` : "5.88 min"}
+              {latestRun?.test_rmse != null ? `${latestRun.test_rmse.toFixed(2)} min` : "—"}
             </p>
             <p className="text-xs text-slate-400 mt-1">Penalizes large prediction outliers</p>
           </div>
@@ -116,7 +116,7 @@ export default function DashboardPage() {
               <Award className="w-4 h-4 text-emerald-400" />
             </div>
             <p className="text-3xl font-extrabold text-emerald-400 mt-2">
-              {latestRun?.test_r2 ? `${(latestRun.test_r2 * 100).toFixed(1)}%` : "91.9%"}
+              {latestRun?.test_r2 != null ? `${(latestRun.test_r2 * 100).toFixed(1)}%` : "—"}
             </p>
             <p className="text-xs text-slate-400 mt-1">100% represents a perfect fit</p>
           </div>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
           <div className="glass-card p-4">
             <span className="text-xs text-slate-400 uppercase font-semibold">Accuracy</span>
             <p className="text-2xl font-bold text-white mt-1">
-              {latestRun?.test_accuracy ? `${(latestRun.test_accuracy * 100).toFixed(1)}%` : "75.8%"}
+              {latestRun?.test_accuracy != null ? `${(latestRun.test_accuracy * 100).toFixed(1)}%` : "—"}
             </p>
             <span className="text-[11px] text-slate-500">Correct classifications</span>
           </div>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
           <div className="glass-card p-4">
             <span className="text-xs text-slate-400 uppercase font-semibold">Precision</span>
             <p className="text-2xl font-bold text-cyan-400 mt-1">
-              {latestRun?.test_precision ? `${(latestRun.test_precision * 100).toFixed(1)}%` : "51.1%"}
+              {latestRun?.test_precision != null ? `${(latestRun.test_precision * 100).toFixed(1)}%` : "—"}
             </p>
             <span className="text-[11px] text-slate-500">True delayed / predicted delayed</span>
           </div>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
           <div className="glass-card p-4">
             <span className="text-xs text-slate-400 uppercase font-semibold">Recall</span>
             <p className="text-2xl font-bold text-amber-400 mt-1">
-              {latestRun?.test_recall ? `${(latestRun.test_recall * 100).toFixed(1)}%` : "45.8%"}
+              {latestRun?.test_recall != null ? `${(latestRun.test_recall * 100).toFixed(1)}%` : "—"}
             </p>
             <span className="text-[11px] text-slate-500">Caught delays / actual delays</span>
           </div>
@@ -157,7 +157,7 @@ export default function DashboardPage() {
           <div className="glass-card p-4">
             <span className="text-xs text-slate-400 uppercase font-semibold">F1 Score</span>
             <p className="text-2xl font-bold text-purple-400 mt-1">
-              {latestRun?.test_f1 ? `${(latestRun.test_f1 * 100).toFixed(1)}%` : "48.3%"}
+              {latestRun?.test_f1 != null ? `${(latestRun.test_f1 * 100).toFixed(1)}%` : "—"}
             </p>
             <span className="text-[11px] text-slate-500">Harmonic mean precision & recall</span>
           </div>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           <div className="glass-card p-4">
             <span className="text-xs text-slate-400 uppercase font-semibold">ROC-AUC</span>
             <p className="text-2xl font-bold text-emerald-400 mt-1">
-              {latestRun?.test_roc_auc ? latestRun.test_roc_auc.toFixed(3) : "0.701"}
+              {latestRun?.test_roc_auc != null ? latestRun.test_roc_auc.toFixed(3) : "—"}
             </p>
             <span className="text-[11px] text-slate-500">Probability ranking power</span>
           </div>
@@ -222,13 +222,16 @@ export default function DashboardPage() {
               <li className="flex items-start space-x-2">
                 <span className="text-emerald-400 font-bold">•</span>
                 <span>
-                  <strong className="text-slate-100">ETA Accuracy:</strong> R² of 91.9% indicates the multi-task backbone predicts ride duration with high accuracy (MAE ~4.4 min).
+                  <strong className="text-slate-100">ETA Accuracy:</strong>{" "}
+                  {latestRun?.test_r2 != null
+                    ? `R² of ${(latestRun.test_r2 * 100).toFixed(1)}% indicates the multi-task backbone predicts ride duration with high accuracy (MAE ~${latestRun.test_mae?.toFixed(1)} min).`
+                    : "Run training to see ETA prediction accuracy."}
                 </span>
               </li>
               <li className="flex items-start space-x-2">
                 <span className="text-amber-400 font-bold">•</span>
                 <span>
-                  <strong className="text-slate-100">Class Imbalance:</strong> Delayed rides make up only 18.3% of total data. Adjusting `DELAY_THRESHOLD` in Admin Panel tunes precision vs recall tradeoff.
+                  <strong className="text-slate-100">Class Imbalance:</strong> Adjusting `DELAY_THRESHOLD` in Admin Panel tunes precision vs recall tradeoff.
                 </span>
               </li>
               <li className="flex items-start space-x-2">
@@ -241,7 +244,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="mt-4 p-3 bg-slate-900/60 border border-slate-800 rounded-xl text-[11px] text-slate-400">
-            Evaluating on 30,000 test orders • PyTorch Device: CUDA
+            {latestRun ? `Evaluated on ${latestRun.val_samples?.toLocaleString() ?? "—"} validation samples • Run #${latestRun.id}` : "No completed training run yet"}
           </div>
         </div>
       </div>
@@ -294,9 +297,9 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-4 py-3">{run.completed_epochs} / {run.total_epochs}</td>
                     <td className="px-4 py-3">{run.best_val_loss?.toFixed(4) || "-"}</td>
-                    <td className="px-4 py-3 font-bold text-cyan-400">{run.test_mae?.toFixed(2) || "4.39"} min</td>
+                    <td className="px-4 py-3 font-bold text-cyan-400">{run.test_mae != null ? `${run.test_mae.toFixed(2)} min` : "—"}</td>
                     <td className="px-4 py-3 font-bold text-purple-400">
-                      {run.test_f1 ? `${(run.test_f1 * 100).toFixed(1)}%` : "48.3%"}
+                      {run.test_f1 != null ? `${(run.test_f1 * 100).toFixed(1)}%` : "—"}
                     </td>
                     <td className="px-4 py-3">{run.threshold ?? 0.3}</td>
                     <td className="px-4 py-3 font-sans text-slate-400">

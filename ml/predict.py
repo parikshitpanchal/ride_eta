@@ -4,18 +4,18 @@ import pandas as pd
 # pyrefly: ignore [missing-import]
 import torch
 
-from configs import config
+from ml.configs import config
 # pyrefly: ignore [missing-import]
-from datasets.dataloader import create_dataloader
+from ml.datasets.dataloader import create_dataloader
 # pyrefly: ignore [missing-import]
-from datasets.ride_dataset import RideDataset
-from models.ride_eta_network import RideETANetwork
-from predictor.predictor import Predictor
-from preprocessing.encoder import CategoricalEncoder
-from preprocessing.pipeline import DataPipeline
-from preprocessing.scaler import NumericalScaler
-from preprocessing.validator import DataValidator
-from utils.model_metadata import load_model_metadata
+from ml.datasets.ride_dataset import RideDataset
+from ml.models.ride_eta_network import RideETANetwork
+from ml.predictor.predictor import Predictor
+from ml.preprocessing.encoder import CategoricalEncoder
+from ml.preprocessing.pipeline import DataPipeline
+from ml.preprocessing.scaler import NumericalScaler
+from ml.preprocessing.validator import DataValidator
+from ml.utils.model_metadata import load_model_metadata
 
 logger = logging.getLogger(__name__)
 

@@ -6,11 +6,11 @@ import torch.nn as nn
 # pyrefly: ignore [missing-import]
 from torch.utils.data import DataLoader
 
-from callbacks.checkpoint import ModelCheckpoint
-from callbacks.early_stopping import EarlyStopping
-from configs import config
-from metrics.classification_metrics import calculate_classification_metrics
-from metrics.regression_metrics import calculate_regression_metrics
+from ml.callbacks.checkpoint import ModelCheckpoint
+from ml.callbacks.early_stopping import EarlyStopping
+from ml.configs import config
+from ml.metrics.classification_metrics import calculate_classification_metrics
+from ml.metrics.regression_metrics import calculate_regression_metrics
 
 import logging
 

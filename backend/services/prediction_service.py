@@ -21,16 +21,16 @@ logger = logging.getLogger(__name__)
 
 def run_prediction_on_dataframe(df: pd.DataFrame, db: Session) -> dict:
     """Run model predictions on a DataFrame and save results to DB."""
-    from configs import config as ml_config
-    from preprocessing.encoder import CategoricalEncoder
-    from preprocessing.scaler import NumericalScaler
-    from preprocessing.validator import DataValidator
-    from preprocessing.pipeline import DataPipeline
-    from datasets.ride_dataset import RideDataset
-    from datasets.dataloader import create_dataloader
-    from models.ride_eta_network import RideETANetwork
-    from predictor.predictor import Predictor
-    from utils.model_metadata import load_model_metadata
+    from ml.configs import config as ml_config
+    from ml.preprocessing.encoder import CategoricalEncoder
+    from ml.preprocessing.scaler import NumericalScaler
+    from ml.preprocessing.validator import DataValidator
+    from ml.preprocessing.pipeline import DataPipeline
+    from ml.datasets.ride_dataset import RideDataset
+    from ml.datasets.dataloader import create_dataloader
+    from ml.models.ride_eta_network import RideETANetwork
+    from ml.predictor.predictor import Predictor
+    from ml.utils.model_metadata import load_model_metadata
 
     # Load model metadata and weights
     metadata = load_model_metadata(ml_config.SAVED_MODEL_DIR / ml_config.MODEL_METADATA_FILE)
