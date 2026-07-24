@@ -27,15 +27,14 @@ export default function Sidebar() {
   const navItems = [
     { label: "Predictions", href: "/predictions", icon: Table, roles: ["admin", "data_scientist", "guest"] },
     { label: "Model Dashboard", href: "/dashboard", icon: BarChart3, roles: ["admin", "data_scientist", "guest"] },
-    { label: "Training Monitor", href: "/training", icon: Activity, roles: ["admin", "data_scientist", "guest"] },
+    { label: "Training Monitor", href: "/training", icon: Activity, roles: ["admin"] },
     { label: "Driver Analytics", href: "/drivers", icon: Users, roles: ["admin", "data_scientist", "guest"] },
     { label: "Admin Panel", href: "/admin", icon: Sliders, roles: ["admin"] },
   ];
 
+  const currentRole = isAuthenticated ? role : "guest"; 
   const filteredNavItems = navItems.filter((item) => {
-    if (!isAuthenticated) return true;
-    if (item.roles.includes("admin") && role === "admin") return true;
-    return item.roles.includes(role);
+    return item.roles.includes(currentRole);
   });
 
   const isDark = theme === "dark";
@@ -102,13 +101,12 @@ export default function Sidebar() {
                     {user?.username}
                   </p>
                   <span
-                    className={`inline-block px-1.5 rounded text-[10px] font-semibold uppercase ${
-                      role === "admin"
+                    className={`inline-block px-1.5 rounded text-[10px] font-semibold uppercase ${role === "admin"
                         ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                         : role === "data_scientist"
-                        ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                        : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    }`}
+                          ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                          : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      }`}
                   >
                     {role === "data_scientist" ? "Data Sci" : role}
                   </span>
@@ -152,18 +150,17 @@ export default function Sidebar() {
                 style={
                   isActive
                     ? {
-                        background: "var(--bg-active)",
-                        color: "var(--text-active)",
-                        border: "1px solid var(--border-active)",
-                      }
+                      background: "var(--bg-active)",
+                      color: "var(--text-active)",
+                      border: "1px solid var(--border-active)",
+                    }
                     : {
-                        color: "var(--text-secondary)",
-                        border: "1px solid transparent",
-                      }
+                      color: "var(--text-secondary)",
+                      border: "1px solid transparent",
+                    }
                 }
-                className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
-                  !isActive ? "hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]" : ""
-                }`}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${!isActive ? "hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]" : ""
+                  }`}
               >
                 <Icon
                   className="w-5 h-5"

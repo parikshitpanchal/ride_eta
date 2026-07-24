@@ -6,11 +6,8 @@ import {
   Play,
   Square,
   Activity,
-  CheckCircle2,
-  Clock,
   Zap,
   TrendingDown,
-  RefreshCw,
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -229,9 +226,8 @@ export default function TrainingPage() {
                 <h2 className="text-lg font-bold text-white">
                   {isTraining ? "Training Loop Running" : "Status: Idle"}
                 </h2>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                  isTraining ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30" : "bg-slate-800 text-slate-400"
-                }`}>
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${isTraining ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30" : "bg-slate-800 text-slate-400"
+                  }`}>
                   {isTraining ? "Active" : "Ready"}
                 </span>
               </div>

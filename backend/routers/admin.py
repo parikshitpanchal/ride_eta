@@ -32,7 +32,7 @@ router = APIRouter(prefix="/api/admin", tags=["Admin"])
 # In-memory config overrides (per session; persists until server restart)
 _config_overrides: dict = {}
 
-
+# get all from config
 def _get_ml_config():
     """Import the ML config module."""
     import sys
@@ -43,7 +43,7 @@ def _get_ml_config():
     return ml_config
 
 
-@router.get("/config", response_model=ConfigResponse)
+@router.get("/config", response_model=ConfigResponse,dependencies=[Depends(require_role("admin"))])
 def get_config():
     """Get current ML configuration values."""
     ml_config = _get_ml_config()
@@ -60,7 +60,7 @@ def get_config():
     )
 
 
-@router.put("/config", response_model=ConfigResponse)
+@router.put("/config", response_model=ConfigResponse,dependencies=[Depends(require_role("admin"))])
 def update_config(request: ConfigUpdateRequest):
     """Update ML configuration values (applied at next training run)."""
     ml_config = _get_ml_config()
@@ -91,8 +91,8 @@ def update_config(request: ConfigUpdateRequest):
 
     return get_config()
 
-
-@router.post("/upload-csv", response_model=UploadResponse)
+# runs when user uploads the data in csv format and press upload to database
+@router.post("/upload-csv", response_model=UploadResponse,dependencies=[Depends(require_role("admin"))])
 async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
     """Upload a CSV file and insert rows into raw_ride_orders."""
     if not file.filename.endswith(".csv"):
@@ -119,17 +119,11 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
         raise HTTPException(status_code=500, detail=f"Error clearing database: {str(e)}")
 
     rows = []
-    
+    # insert all data into list and then push them into DB table--RawRideOrder
     for _, row in df.iterrows():
 
-
-        # Skip if order_id already exists
-        # existing = db.query(RawRideOrder).filter(RawRideOrder.order_id == row.get("order_id")).first()
-        # if existing:
-        #     continue
-
         rows.append({
-                "order_id":row.get("order_id"),
+            "order_id":row.get("order_id"),
             "booking_timestamp":str(row.get("booking_timestamp", "")),
             "hour":int(row["hour"]) if pd.notna(row.get("hour")) else None,
             "day_of_week":int(row["day_of_week"]) if pd.notna(row.get("day_of_week")) else None,
@@ -167,8 +161,7 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
             "order_delayed":int(row["order_delayed"]) if pd.notna(row.get("order_delayed")) else None,
             "delay_severity":str(row.get("delay_severity", "")),
         })
-        
-        # db.add(order)
+
         rows_inserted += 1
     db.bulk_insert_mappings(RawRideOrder,rows)
     db.commit()
@@ -180,15 +173,16 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
         filename=file.filename,
     )
 
-
-@router.post("/run-feature-engineering")
-def run_feature_engineering(db: Session = Depends(get_db)):
+# runs if there unprocessed data available
+# goes to ml/feature_engineering.py
+@router.post("/run-feature-engineering",dependencies=[Depends(require_role("admin"))])
+def run_feature_engineering(db: Session = Depends(get_db),):
     """Trigger feature engineering on unprocessed raw orders."""
     from backend.services.feature_engineering_service import run_feature_engineering_on_db
     result = run_feature_engineering_on_db(db)
     return result
 
-
+# runs on uploaded prediction file and store prediction into predictions table
 @router.post("/run-prediction")
 async def run_prediction(file: UploadFile = File(...), db: Session = Depends(get_db)):
     """Run model predictions on an uploaded CSV file."""
@@ -203,7 +197,7 @@ async def run_prediction(file: UploadFile = File(...), db: Session = Depends(get
     return result
 
 
-@router.get("/pipeline-status", response_model=PipelineStatusResponse)
+@router.get("/pipeline-status", response_model=PipelineStatusResponse,dependencies=[Depends(require_role("admin"))])
 def get_pipeline_status(db: Session = Depends(get_db)):
     """Get data pipeline status: counts of raw, engineered, predictions, etc."""
     total_raw = db.query(func.count(RawRideOrder.id)).scalar() or 0

@@ -22,7 +22,7 @@ router = APIRouter(prefix="/api/training", tags=["Training"])
 _training_task = None
 
 
-@router.post("/start", response_model=TrainingRunResponse, dependencies=[Depends(require_role("admin"))])
+@router.post("/start", response_model=TrainingRunResponse)
 def start_training(db: Session = Depends(get_db)):
     """Start a new training run in the background."""
     # Check if already training
@@ -46,7 +46,7 @@ def get_training_status(db: Session = Depends(get_db)):
     )
 
 
-@router.post("/stop", dependencies=[Depends(require_role("admin"))])
+@router.post("/stop")
 def stop_training(db: Session = Depends(get_db)):
     """Stop the current training run."""
     active = db.query(TrainingRun).filter(TrainingRun.status == "running").first()

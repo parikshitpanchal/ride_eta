@@ -27,6 +27,13 @@ export async function fetchApi(endpoint, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+      return;
+    }
     throw new Error(errorData.detail || `API Error: ${response.statusText}`);
   }
 
